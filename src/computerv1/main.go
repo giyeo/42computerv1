@@ -65,49 +65,72 @@ func getPoly(s string) (Poly, error) {
 	return poly, nil
 }
 
-func isNegative(number int) bool {
-    return number < 0
-}
-
-func getDegreeStr(value float64, degree string) string {
-	if (value == 0) {
+func getDegreeStr(value float64, degree int, hdegree int) string {
+	strDegree := []string{"X^0", "X^1", "X^2", "X^3"}
+	if (value == 0 && degree > hdegree) {
 		return ""
-	} else if (value > 0) {
-		return "+ " + strconv.FormatFloat(value, 'f', -1, 64) + " * " + degree + " " 
-	} else {
+	} else if (value < 0){
 		value = value * -1.0
-		return "- " + strconv.FormatFloat(value, 'f', -1, 64) + " * " + degree + " "
+		return "- " + strconv.FormatFloat(value, 'f', -1, 64) + " * " + strDegree[degree] + " "
+	} else {
+		return "+ " + strconv.FormatFloat(value, 'f', -1, 64) + " * " + strDegree[degree] + " "
 	}
 }
 
-func getPolyReducedForm(poly1 Poly, poly2 Poly) string {
+func getDegree(x0 float64, x1 float64, x2 float64, x3 float64) int {
+	if x3 != 0 {
+		return 3
+	} else if x2 != 0 {
+		return 2
+	} else if x1 != 0 {
+		return 1
+	}
+	return 0
+}
+
+func getPolyReducedForm(poly1 Poly, poly2 Poly) (string, int) {
 	x0 := poly1.x0 - poly2.x0
 	x1 := poly1.x1 - poly2.x1
 	x2 := poly1.x2 - poly2.x2
 	x3 := poly1.x3 - poly2.x3
-	s0, s1, s2, s3 := "X^0", "X^1", "X^2", "X^3"
-	res := getDegreeStr(x0, s0) + getDegreeStr(x1, s1) + getDegreeStr(x2, s2) + getDegreeStr(x3, s3)
+
+	degree := getDegree(x0, x1, x2, x3)
+	res := getDegreeStr(x0, 0, degree)+
+		getDegreeStr(x1, 1, degree) +
+		getDegreeStr(x2, 2, degree) +
+		getDegreeStr(x3, 3, degree)
+	
+	if res == "" {
+        return "0 = 0", 0
+    }
 
 	if(res[0] == '+') {
-		res = res[1:]
+		res = res[2:]
 	}
-	res = res + "= 0"
-
-	return res
+	return res + "= 0", degree
 }
 
-func givenInput(input string) string {
+func givenInput(input string) (string, int) {
 	sides := strings.Split(input, "=")
 	polyInstance, err := getPoly(sides[0])
 	polyInstance2, err2 := getPoly(sides[1])
 	if(err != nil || err2 != nil) {
 		fmt.Println("Error", err)
-		return ""
+		return "", -1
 	}
 	return getPolyReducedForm(polyInstance, polyInstance2)
-	
 }
 
 func main() {
-	givenInput("5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0")
+	println("Reduced form: 4 * X^0 + 4 * X^1 - 9.3 * X^2 = 0")
+	reduced, degree := givenInput("5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0")
+	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n", reduced, degree)
+
+	println("Reduced form: 1 * X^0 + 4 * X^1 = 0")
+	reduced, degree = givenInput("5 * X^0 + 4 * X^1 = 4 * X^0")
+	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n", reduced, degree)
+
+	println("Reduced form: 5 * X^0 - 6 * X^1 + 0 * X^2 - 5.6 * X^3 = 0")
+	reduced, degree = givenInput("8 * X^0 - 6 * X^1 + 0 * X^2 - 5.6 * X^3 = 3 * X^0")
+	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n", reduced, degree)
 }
