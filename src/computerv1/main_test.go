@@ -13,7 +13,7 @@ func TestGivenInput(t *testing.T) {
 			input:           "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0",
 			expectedReduce:  "4 * X^0 + 4 * X^1 - 9.3 * X^2 = 0",
 			expectedDegree:  2,
-			expectedSolution: "",
+			expectedSolution: "1",
 		},
 		{
 			input:           "5 * X^0 + 4 * X^1 = 4 * X^0",
