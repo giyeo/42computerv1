@@ -88,7 +88,7 @@ func getDegree(x0 float64, x1 float64, x2 float64, x3 float64) int {
 	return 0
 }
 
-func getPolyReducedForm(poly1 Poly, poly2 Poly) (string, int) {
+func getPolyReducedForm(poly1 Poly, poly2 Poly) (string, int, Poly) {
 	x0 := poly1.x0 - poly2.x0
 	x1 := poly1.x1 - poly2.x1
 	x2 := poly1.x2 - poly2.x2
@@ -100,37 +100,42 @@ func getPolyReducedForm(poly1 Poly, poly2 Poly) (string, int) {
 		getDegreeStr(x2, 2, degree) +
 		getDegreeStr(x3, 3, degree)
 	
-	if res == "" {
-        return "0 = 0", 0
-    }
+	// if res == "" {
+    //     return "0 = 0", 0
+    // }
 
 	if(res[0] == '+') {
 		res = res[2:]
 	}
-	return res + "= 0", degree
+	return res + "= 0", degree, Poly{x0,x1,x2,x3}
 }
 
-func givenInput(input string) (string, int) {
+func solvePoly(poly Poly, degree int) string {
+	if(degree > 2) {
+		return "The polynomial degree is strictly greater than 2, I can't solve."
+	}
+	return ""
+}	
+
+func givenInput(input string) (string, int, string) {
 	sides := strings.Split(input, "=")
 	polyInstance, err := getPoly(sides[0])
 	polyInstance2, err2 := getPoly(sides[1])
 	if(err != nil || err2 != nil) {
 		fmt.Println("Error", err)
-		return "", -1
+		return "", -1, ""
 	}
-	return getPolyReducedForm(polyInstance, polyInstance2)
+	reduced, degree, reducedPoly := getPolyReducedForm(polyInstance, polyInstance2)
+	return reduced, degree, solvePoly(reducedPoly, degree)
 }
 
 func main() {
-	println("Reduced form: 4 * X^0 + 4 * X^1 - 9.3 * X^2 = 0")
-	reduced, degree := givenInput("5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0")
-	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n", reduced, degree)
+	reduced, degree, solution := givenInput("5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0")
+	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n%s\n", reduced, degree, solution)
 
-	println("Reduced form: 1 * X^0 + 4 * X^1 = 0")
-	reduced, degree = givenInput("5 * X^0 + 4 * X^1 = 4 * X^0")
-	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n", reduced, degree)
+	reduced, degree, solution = givenInput("5 * X^0 + 4 * X^1 = 4 * X^0")
+	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n%s\n", reduced, degree, solution)
 
-	println("Reduced form: 5 * X^0 - 6 * X^1 + 0 * X^2 - 5.6 * X^3 = 0")
-	reduced, degree = givenInput("8 * X^0 - 6 * X^1 + 0 * X^2 - 5.6 * X^3 = 3 * X^0")
-	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n", reduced, degree)
+	reduced, degree, solution = givenInput("8 * X^0 - 6 * X^1 + 0 * X^2 - 5.6 * X^3 = 3 * X^0")
+	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n%s\n", reduced, degree, solution)
 }
