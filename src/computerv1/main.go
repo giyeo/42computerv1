@@ -95,6 +95,7 @@ func getPolyReducedForm(poly1 Poly, poly2 Poly) (string, int, Poly) {
 	x3 := poly1.x3 - poly2.x3
 
 	degree := getDegree(x0, x1, x2, x3)
+
 	res := getDegreeStr(x0, 0, degree)+
 		getDegreeStr(x1, 1, degree) +
 		getDegreeStr(x2, 2, degree) +
@@ -110,9 +111,48 @@ func getPolyReducedForm(poly1 Poly, poly2 Poly) (string, int, Poly) {
 	return res + "= 0", degree, Poly{x0,x1,x2,x3}
 }
 
+func sqrt(x float64) float64 {
+	// Initial guess for the square root
+	z := x / 2.0
+
+	// Iterate to improve the estimate
+	for i := 0; i < 10; i++ {
+		z = z - (z*z-x)/(2*z)
+	}
+
+	return z
+}
+
 func solvePoly(poly Poly, degree int) string {
 	if(degree > 2) {
 		return "The polynomial degree is strictly greater than 2, I can't solve."
+	}
+	if(degree == 2) {
+		A, B, C := poly.x2, poly.x1, poly.x0
+		discriminant := (B * B) - (4 * A * C)
+		if(discriminant > 0) {
+			xA := -B + sqrt(discriminant) / 2.0 * A
+			xB := -B - sqrt(discriminant) / 2.0 * A
+			
+			return "Discriminant is strictly positive, the two solutions are:\n" +
+				strconv.FormatFloat(xA,'f', -1, 64) + "\n" +
+				strconv.FormatFloat(xB,'f', -1, 64)
+		} else if(discriminant == 0) {
+			xA := -B + sqrt(discriminant) / 2.0 * A
+			return "Discriminant is equal to zero, the solutions is:\n" +
+			strconv.FormatFloat(xA,'f', -1, 64)
+		} else {
+			return "Discriminant is negative, there's no real solution."
+		}
+	}
+	if(degree == 1) {
+		return "The solution is:\n" + strconv.FormatFloat(poly.x0 * -1 / poly.x1,'f', -1, 64)
+	}
+	if(degree == 0) {
+		if(poly.x0 == 0) {
+			return "True"
+		}
+		return "False"
 	}
 	return ""
 }	
