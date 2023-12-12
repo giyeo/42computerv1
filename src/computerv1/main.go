@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"os"
 )
 
 type Poly struct {
@@ -157,7 +158,30 @@ func solvePoly(poly Poly, degree int) string {
 	return ""
 }	
 
+func removeChars(inputString string, charsToRemove string) string {
+	removeMap := func(r rune) rune {
+		if strings.ContainsRune(charsToRemove, r) {
+			return -1 // Remove the character
+		}
+		return r
+	}
+
+	result := strings.Map(removeMap, inputString)
+	return result
+}
+
+func checkInput(input string) {
+	validChars := "0123456789*/X^+-.= "
+	remained := removeChars(input, validChars)
+	if (remained != "") {
+		println("Non valid Char encontered:" + remained)
+		os.Exit(1);
+	}
+
+}
 func givenInput(input string) (string, int, string) {
+	checkInput(input)
+
 	sides := strings.Split(input, "=")
 	polyInstance, err := getPoly(sides[0])
 	polyInstance2, err2 := getPoly(sides[1])
