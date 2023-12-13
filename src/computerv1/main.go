@@ -131,16 +131,16 @@ func solvePoly(poly Poly, degree int) string {
 		A, B, C := poly.x2, poly.x1, poly.x0
 		discriminant := (B * B) - (4 * A * C)
 		if(discriminant > 0) {
-			xA := -B + sqrt(discriminant) / 2.0 * A
-			xB := -B - sqrt(discriminant) / 2.0 * A
+			xA := (-B + sqrt(discriminant) ) / (2.0 * A)
+			xB := (-B - sqrt(discriminant) ) / (2.0 * A)
 			
 			return "Discriminant is strictly positive, the two solutions are:\n" +
-				strconv.FormatFloat(xA,'f', -1, 64) + "\n" +
-				strconv.FormatFloat(xB,'f', -1, 64)
+				strconv.FormatFloat(xB,'f', 6, 64) + "\n" +
+				strconv.FormatFloat(xA,'f', 6, 64)
 		} else if(discriminant == 0) {
-			xA := -B + sqrt(discriminant) / 2.0 * A
+			xA := (-B + sqrt(discriminant) ) / (2.0 * A)
 			return "Discriminant is equal to zero, the solutions is:\n" +
-			strconv.FormatFloat(xA,'f', -1, 64)
+			strconv.FormatFloat(xA,'f', 6, 64)
 		} else {
 			return "Discriminant is negative, there's no real solution."
 		}
@@ -171,11 +171,11 @@ func givenInput(input string) (string, int, string) {
 
 func main() {
 	reduced, degree, solution := givenInput("5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0")
-	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n%s\n", reduced, degree, solution)
+	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n%s\n\n", reduced, degree, solution)
 
 	reduced, degree, solution = givenInput("5 * X^0 + 4 * X^1 = 4 * X^0")
-	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n%s\n", reduced, degree, solution)
+	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n%s\n\n", reduced, degree, solution)
 
 	reduced, degree, solution = givenInput("8 * X^0 - 6 * X^1 + 0 * X^2 - 5.6 * X^3 = 3 * X^0")
-	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n%s\n", reduced, degree, solution)
+	fmt.Printf("Reduced form: %s\nPolynomial degree: %d\n%s\n\n", reduced, degree, solution)
 }
